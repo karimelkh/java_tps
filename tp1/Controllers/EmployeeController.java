@@ -43,22 +43,4 @@ public class EmployeeController {
           }
         });
   }
-
-  public static void afficherTable() {
-    EmployeeModel p = null;
-    String query = "SELECT * FROM employee";
-    try {
-      rs = st.executeQuery(query);
-      tabModel.setRowCount(0);
-      while (rs.next()) {
-        p = new EmployeeModel(rs);
-        tabModel.addRow(
-            new Object[] {p.getNom(), p.getPrenom(), p.getEmail(), p.getTel(), p.getSalaire()});
-        tab.setModel(tabModel);
-        System.out.println(p);
-      }
-    } catch (Exception e) {
-      System.out.println(e);
-    }
-  }
 }

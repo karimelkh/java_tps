@@ -10,15 +10,15 @@ import javax.swing.*;
 
 public class EmployeeDAOImpl implements EmployeeDAOI {
   public Connection con = null;
-  public Statement st = null;
-  private ResultSet rs = null;
+  public static Statement st = null;
+  public static ResultSet rs = null;
 
   public EmployeeDAOImpl() {
     try {
       Class.forName("org.postgresql.Driver");
       this.con = DriverManager.getConnection(url, dbuser, dbpw);
       System.out.println("Connection established!!");
-      this.st = this.con.createStatement();
+      st = this.con.createStatement();
     } catch (Exception e) {
       System.out.println(e);
     }
@@ -30,14 +30,15 @@ public class EmployeeDAOImpl implements EmployeeDAOI {
             + p.getNom()
             + "', '"
             + p.getPrenom()
-            + "', "
+            + "', '"
             + p.getEmail()
-            + "', "
+            + "', '"
             + p.getTel()
             + "', "
             + p.getSalaire()
-            + "')";
+            + ")";
     try {
+      System.out.println(query);
       System.out.println("insert query returned " + st.executeUpdate(query));
       EmployeeView.emptyFields();
       EmployeeView.afficherTable();
@@ -66,7 +67,10 @@ public class EmployeeDAOImpl implements EmployeeDAOI {
       EmployeeView.emptyFields();
       EmployeeView.afficherTable();
       JOptionPane.showMessageDialog(
-          null, p.toString(), "SUPPRIMER", JOptionPane.INFORMATION_MESSAGE);
+          null,
+          (new EmployeeModel(nom, prenom, email, tel, salaire).toString()),
+          "SUPPRIMER",
+          JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception e) {
       System.out.println(e);
     }

@@ -1,12 +1,12 @@
 package Views;
 
+import DAO.EmployeeDAOImpl;
+import Models.EmployeeModel;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class EmployeeView extends JFrame {
-  // public Statement st = null;
-  // public ResultSet rs = null;
   private JPanel pan = new JPanel();
   private JPanel tabPan = new JPanel();
   private JPanel panOne = new JPanel();
@@ -22,8 +22,8 @@ public class EmployeeView extends JFrame {
   public static JButton delBtn = new JButton("Supprimer");
   public static JButton showBtn = new JButton("Afficher");
 
-  private JTable tab = new JTable();
-  private DefaultTableModel tabModel = new DefaultTableModel();
+  public static JTable tab = new JTable();
+  public static DefaultTableModel tabModel = new DefaultTableModel();
 
   public EmployeeView() {
     this.setTitle("Gestion des employes");
@@ -62,6 +62,24 @@ public class EmployeeView extends JFrame {
     panTwo.add(showBtn);
 
     this.setVisible(true);
+  }
+
+  public static void afficherTable() {
+    EmployeeModel p = null;
+    String query = "SELECT * FROM employee";
+    try {
+      EmployeeDAOImpl.rs = EmployeeDAOImpl.st.executeQuery(query);
+      EmployeeView.tabModel.setRowCount(0);
+      while (EmployeeDAOImpl.rs.next()) {
+        p = new EmployeeModel(EmployeeDAOImpl.rs);
+        EmployeeView.tabModel.addRow(
+            new Object[] {p.getNom(), p.getPrenom(), p.getEmail(), p.getTel(), p.getSalaire()});
+        EmployeeView.tab.setModel(EmployeeView.tabModel);
+        System.out.println(p);
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
   }
 
   public static void emptyFields() {
