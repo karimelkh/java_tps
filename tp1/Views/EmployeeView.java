@@ -1,7 +1,8 @@
 package Views;
 
-import DAO.EmployeeDAOImpl;
-import Models.EmployeeModel;
+import Controllers.EmployeeController;
+import Models.Employee.Post;
+import Models.Employee.Role;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,22 +13,27 @@ public class EmployeeView extends JFrame {
   private JPanel panOne = new JPanel();
   private JPanel panTwo = new JPanel();
 
-  public static JTextField nomField = new JTextField();
-  public static JTextField prenomField = new JTextField();
-  public static JTextField emailField = new JTextField();
-  public static JTextField telField = new JTextField();
-  public static JTextField salaireField = new JTextField();
+  public static JTextField idField = new JTextField();
+  public static JTextField lnameField = new JTextField("lname");
+  public static JTextField fnameField = new JTextField("fname");
+  public static JTextField emailField = new JTextField("email");
+  public static JTextField phoneField = new JTextField("+21200110055");
+  public static JTextField salaryField = new JTextField("5000");
 
-  public static JButton addBtn = new JButton("Ajouter");
-  public static JButton delBtn = new JButton("Supprimer");
-  public static JButton showBtn = new JButton("Afficher");
+  public static JComboBox<Role> roleComboBox = new JComboBox<>(Role.values());
+  public static JComboBox<Post> postComboBox = new JComboBox<>(Post.values());
+
+  public static JButton addBtn = new JButton("Add");
+  public static JButton delBtn = new JButton("Delete");
+  public static JButton updateBtn = new JButton("Update");
+  public static JButton showBtn = new JButton("Show");
 
   public static JTable tab = new JTable();
   public static DefaultTableModel tabModel = new DefaultTableModel();
 
   public EmployeeView() {
-    this.setTitle("Gestion des employes");
-    this.setSize(700, 240);
+    this.setTitle("Employees management");
+    this.setSize(800, 400);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setLayout(new BorderLayout());
     this.add(pan, BorderLayout.NORTH);
@@ -39,54 +45,41 @@ public class EmployeeView extends JFrame {
 
     tabPan.add(new JScrollPane(tab));
     tabModel.setRowCount(0);
-    tabModel.addColumn("Nom");
-    tabModel.addColumn("Prenom");
-    tabModel.addColumn("Age");
+    tabModel.addColumn("ID");
+    tabModel.addColumn("Last name");
+    tabModel.addColumn("First name");
+    tabModel.addColumn("Email");
+    tabModel.addColumn("Phone");
+    tabModel.addColumn("Salary");
+    tabModel.addColumn("Post");
+    tabModel.addColumn("Role");
     tab.setModel(tabModel);
 
-    panOne.setLayout(new GridLayout(3, 2));
-    panOne.add(new JLabel("nom"));
-    panOne.add(nomField);
-    panOne.add(new JLabel("prenom"));
-    panOne.add(prenomField);
-    panOne.add(new JLabel("email"));
+    panOne.setLayout(new GridLayout(8, 2));
+    panOne.add(new JLabel("ID"));
+    panOne.add(idField);
+    panOne.add(new JLabel("Last name"));
+    panOne.add(lnameField);
+    panOne.add(new JLabel("First name"));
+    panOne.add(fnameField);
+    panOne.add(new JLabel("Email"));
     panOne.add(emailField);
-    panOne.add(new JLabel("tel"));
-    panOne.add(telField);
-    panOne.add(new JLabel("salaire"));
-    panOne.add(salaireField);
+    panOne.add(new JLabel("Phone"));
+    panOne.add(phoneField);
+    panOne.add(new JLabel("Salary"));
+    panOne.add(salaryField);
+    panOne.add(new JLabel("Role"));
+    panOne.add(roleComboBox);
+    panOne.add(new JLabel("Post"));
+    panOne.add(postComboBox);
 
     panTwo.setLayout(new FlowLayout(FlowLayout.CENTER));
     panTwo.add(addBtn);
     panTwo.add(delBtn);
+    panTwo.add(updateBtn);
     panTwo.add(showBtn);
 
+    EmployeeController.populateTable();
     this.setVisible(true);
-  }
-
-  public static void afficherTable() {
-    EmployeeModel p = null;
-    String query = "SELECT * FROM employee";
-    try {
-      EmployeeDAOImpl.rs = EmployeeDAOImpl.st.executeQuery(query);
-      EmployeeView.tabModel.setRowCount(0);
-      while (EmployeeDAOImpl.rs.next()) {
-        p = new EmployeeModel(EmployeeDAOImpl.rs);
-        EmployeeView.tabModel.addRow(
-            new Object[] {p.getNom(), p.getPrenom(), p.getEmail(), p.getTel(), p.getSalaire()});
-        EmployeeView.tab.setModel(EmployeeView.tabModel);
-        System.out.println(p);
-      }
-    } catch (Exception e) {
-      System.out.println(e);
-    }
-  }
-
-  public static void emptyFields() {
-    nomField.setText("");
-    prenomField.setText("");
-    emailField.setText("");
-    telField.setText("");
-    salaireField.setText("");
   }
 }
