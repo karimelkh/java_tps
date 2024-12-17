@@ -1,12 +1,13 @@
 package DAO;
 
-import Models.Employee;
+import Models.EmployeeModel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+// public class EmployeeDAOImpl implements GenericDAOI<EmployeeModel> {
 public class EmployeeDAOImpl implements EmployeeDAOI {
   public static Connection con = null;
   public static Statement st = null;
@@ -25,7 +26,7 @@ public class EmployeeDAOImpl implements EmployeeDAOI {
   }
 
   @Override
-  public boolean addEmployee(Employee em) {
+  public boolean addEmployee(EmployeeModel em) {
     boolean ret = false;
     String query =
         "INSERT INTO employee(lname, fname, email, phone, salary, post, role) VALUES ( '"
@@ -66,7 +67,7 @@ public class EmployeeDAOImpl implements EmployeeDAOI {
   }
 
   @Override
-  public boolean updateEmployee(int id, Employee em) {
+  public boolean updateEmployee(int id, EmployeeModel em) {
     boolean ret = false;
     String query =
         "UPDATE employee SET lname='"

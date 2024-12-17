@@ -1,7 +1,7 @@
 package Controllers;
 
 import DAO.EmployeeDAOImpl;
-import Models.Employee;
+import Models.EmployeeModel;
 import Views.EmployeeView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,8 +21,8 @@ public class EmployeeController {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            Employee em =
-                new Employee(
+            EmployeeModel em =
+                new EmployeeModel(
                     EmployeeView.lnameField.getText(),
                     EmployeeView.fnameField.getText(),
                     EmployeeView.emailField.getText(),
@@ -38,7 +38,7 @@ public class EmployeeController {
               // em.setId(id);
               populateTable();
               JOptionPane.showMessageDialog(
-                  null, "Employee " + em + " added!", "New", JOptionPane.INFORMATION_MESSAGE);
+                  null, "EmployeeModel " + em + " added!", "New", JOptionPane.INFORMATION_MESSAGE);
 
             } else {
               JOptionPane.showMessageDialog(
@@ -54,19 +54,19 @@ public class EmployeeController {
           @Override
           public void actionPerformed(ActionEvent e) {
             int id = Integer.parseInt(EmployeeView.idField.getText());
-            boolean isDeleted = Employee.deleteEmployee(id);
+            boolean isDeleted = EmployeeModel.deleteEmployee(id);
             // EmployeeView.emptyFields();
             if (isDeleted) {
               // populateTable();
               JOptionPane.showMessageDialog(
                   null,
-                  "Employee id " + id + " deleted!",
+                  "EmployeeModel id " + id + " deleted!",
                   "Delete",
                   JOptionPane.INFORMATION_MESSAGE);
 
             } else {
               JOptionPane.showMessageDialog(
-                  null, "Can't delete Employee of id " + id, "Delete", JOptionPane.ERROR_MESSAGE);
+                  null, "Can't delete EmployeeModel of id " + id, "Delete", JOptionPane.ERROR_MESSAGE);
             }
           }
         });
@@ -78,8 +78,8 @@ public class EmployeeController {
           @Override
           public void actionPerformed(ActionEvent e) {
             int id = Integer.parseInt(EmployeeView.idField.getText());
-            Employee em =
-                new Employee(
+            EmployeeModel em =
+                new EmployeeModel(
                     EmployeeView.lnameField.getText(),
                     EmployeeView.fnameField.getText(),
                     EmployeeView.emailField.getText(),
@@ -94,14 +94,14 @@ public class EmployeeController {
               populateTable();
               JOptionPane.showMessageDialog(
                   null,
-                  "Employee id " + id + " updated with values: " + em,
+                  "EmployeeModel id " + id + " updated with values: " + em,
                   "Update",
                   JOptionPane.INFORMATION_MESSAGE);
 
             } else {
               JOptionPane.showMessageDialog(
                   null,
-                  "Can't update Employee of id " + id + " with values: " + em,
+                  "Can't update EmployeeModel of id " + id + " with values: " + em,
                   "Update",
                   JOptionPane.ERROR_MESSAGE);
             }
@@ -120,13 +120,13 @@ public class EmployeeController {
   }
 
   public static void populateTable() {
-    Employee em = null;
+    EmployeeModel em = null;
     String query = "SELECT * FROM employee";
     try {
       EmployeeDAOImpl.rs = EmployeeDAOImpl.st.executeQuery(query);
       EmployeeView.tabModel.setRowCount(0);
       while (EmployeeDAOImpl.rs.next()) {
-        em = new Employee(EmployeeDAOImpl.rs);
+        em = new EmployeeModel(EmployeeDAOImpl.rs);
         EmployeeView.tabModel.addRow(
             new Object[] {
               em.getId(),

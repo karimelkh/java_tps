@@ -1,15 +1,15 @@
 package DAO;
 
-import Models.Employee;
+import Models.EmployeeModel;
 
 interface EmployeeDAOI {
   public String url = "jdbc:postgresql://localhost:5432/java_db";
   public String dbuser = "postgres";
   public String dbpw = "pg1234";
 
-  public boolean addEmployee(Employee em);
+  public boolean addEmployee(EmployeeModel em);
 
   public boolean deleteEmployee(int id);
 
-  public boolean updateEmployee(int id, Employee em);
+  public boolean updateEmployee(int id, EmployeeModel em);
 }

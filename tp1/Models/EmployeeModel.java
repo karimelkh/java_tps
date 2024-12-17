@@ -4,7 +4,7 @@ import DAO.EmployeeDAOImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Employee {
+public class EmployeeModel {
   private static EmployeeDAOImpl dao = null;
   private String lname, fname, email, phone, post, role;
   private double salary;
@@ -21,7 +21,7 @@ public class Employee {
     EMPLOYEE
   };
 
-  public Employee(
+  public EmployeeModel(
       String lname,
       String fname,
       String email,
@@ -39,7 +39,7 @@ public class Employee {
     this.role = role;
   }
 
-  public Employee(ResultSet rs) {
+  public EmployeeModel(ResultSet rs) {
     dao = new EmployeeDAOImpl();
     try {
       this.id = rs.getInt("id");
