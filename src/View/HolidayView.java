@@ -1,6 +1,6 @@
-package Views;
+package View;
 
-import Models.HolidayType;
+import Model.HolidayModel.HolidayType;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -15,8 +15,9 @@ public class HolidayView extends JPanel {
   public JButton addBtn = new JButton("Add");
   public JButton deleteBtn = new JButton("Delete");
   public JButton updateBtn = new JButton("Update");
+  public JButton refreshBtn = new JButton("Refresh");
 
-  public JTextField employeeField = new JTextField();
+  public JComboBox<String> employeeField = new JComboBox<>();
   public JComboBox<HolidayType> typeField = new JComboBox<>(HolidayType.values());
   public JTextField startDateField = new JTextField();
   public JTextField endDateField = new JTextField();
@@ -48,16 +49,20 @@ public class HolidayView extends JPanel {
     tableModel.addColumn("Start Date");
     tableModel.addColumn("End Date");
     tableModel.addColumn("Type");
+    table.getTableHeader().setReorderingAllowed(false);
+
     table.setModel(tableModel);
 
     buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
     buttonsPanel.add(addBtn);
     buttonsPanel.add(deleteBtn);
     buttonsPanel.add(updateBtn);
+    buttonsPanel.add(refreshBtn);
   }
 
   public int getEid() {
-    return Integer.parseInt(employeeField.getText());
+    return Integer.parseInt(
+        employeeField.getSelectedItem().toString().split("-")[0].replaceAll("\\s", ""));
   }
 
   public String getType() {
@@ -70,5 +75,13 @@ public class HolidayView extends JPanel {
 
   public String getEndDate() {
     return endDateField.getText();
+  }
+
+  public void showSuccess(String message) {
+    JOptionPane.showMessageDialog(null, message, null, JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void showFailure(String message) {
+    JOptionPane.showMessageDialog(null, message, null, JOptionPane.ERROR_MESSAGE);
   }
 }

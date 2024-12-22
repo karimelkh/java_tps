@@ -1,14 +1,15 @@
-package Models;
+package Model;
 
 import DAO.EmployeeDAOImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class EmployeeModel {
-  private static EmployeeDAOImpl dao = null;
+  private EmployeeDAOImpl dao = null;
   private String lname, fname, email, phone, post, role;
   private double salary;
-  private int id;
+  private int id, solde;
 
   public enum Post {
     STUDY_AND_DEV_ENGINEER,
@@ -20,6 +21,10 @@ public class EmployeeModel {
     ADMIN,
     EMPLOYEE
   };
+
+  public EmployeeModel() {
+    this.dao = new EmployeeDAOImpl();
+  }
 
   public EmployeeModel(
       String lname,
@@ -37,10 +42,11 @@ public class EmployeeModel {
     this.salary = salary;
     this.post = post;
     this.role = role;
+    this.dao = new EmployeeDAOImpl();
   }
 
   public EmployeeModel(ResultSet rs) {
-    dao = new EmployeeDAOImpl();
+    this.dao = new EmployeeDAOImpl();
     try {
       this.id = rs.getInt("id");
       this.lname = rs.getString("lname");
@@ -50,11 +56,13 @@ public class EmployeeModel {
       this.salary = rs.getDouble("salary");
       this.post = rs.getString("post");
       this.role = rs.getString("role");
+      this.solde = rs.getInt("solde");
     } catch (SQLException e) {
       System.out.println(e);
     }
   }
 
+  // Getters
   public int getId() {
     return this.id;
   }
@@ -87,6 +95,11 @@ public class EmployeeModel {
     return this.role;
   }
 
+  public int getSolde() {
+    return this.solde;
+  }
+
+  // Setters
   public void setId(int id) {
     this.id = id;
   }
@@ -119,6 +132,10 @@ public class EmployeeModel {
     this.role = role;
   }
 
+  public void setSolde(int solde) {
+    this.solde = solde;
+  }
+
   @Override
   public String toString() {
     return this.fname
@@ -138,16 +155,20 @@ public class EmployeeModel {
 
   public boolean addEmployee() {
     // add some tests
-    return dao.addEmployee(this);
+    return dao.add(this);
   }
 
-  public static boolean deleteEmployee(int id) {
+  public boolean deleteEmployee(int id) {
     // add some tests
-    return dao.deleteEmployee(id);
+    return dao.delete(id);
   }
 
   public boolean updateEmployee(int id) {
     // add some tests
-    return dao.updateEmployee(id, this);
+    return dao.update(id, this);
+  }
+
+  public ArrayList<EmployeeModel> getAllEmployees() {
+    return dao.getAll();
   }
 }

@@ -1,18 +1,29 @@
-package Models;
+package Model;
 
 import DAO.HolidayDAOImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class HolidayModel {
   private HolidayDAOImpl dao = null;
 
   private int eid, id;
-  private String EmployeeName = "";
-  private String startDate = null;
-  private String endDate = null;
-  private String type = null;
+  private String EmployeeName;
+  private String startDate;
+  private String endDate;
+  private String type;
+
+  private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+  public enum HolidayType {
+    Payed_holiday,
+    Unpayed_holiday,
+    Sickness_holiday
+  };
 
   // Constructors
   public HolidayModel() {
@@ -96,31 +107,31 @@ public class HolidayModel {
   }
 
   // Methods
-  public void addHoliday() {
-    // check if still enough solde
-    if (true) {
+  public boolean addHoliday() {
+    LocalDate sd = LocalDate.parse(startDate, formatter);
+    LocalDate ed = LocalDate.parse(endDate, formatter);
+    int daysBetween = (int) ChronoUnit.DAYS.between(sd, ed);
+    int oldSolde = dao.updateSolde(eid, 0);
+
+    if (oldSolde > 0
+        && daysBetween > 0
+        && daysBetween <= oldSolde
+        && ed.isAfter(sd)
+        && sd.isAfter(LocalDate.now())) {
       if (dao.add(this)) {
-        // decrement solde
-        // notify the user
+        dao.updateSolde(eid, daysBetween);
+        return true;
       }
-    } else {
-      // warn the user
-      System.err.println("Can't add a holiday, say \"WHY?\"");
     }
+    return false;
   }
 
-  public void deleteHoliday(int id) {
-    if (dao.delete(id)) {
-      // notify the user
-    }
+  public boolean deleteHoliday(int id) {
+    return dao.delete(id);
   }
 
-  public void updateHoliday(int id, HolidayModel n) {
-    if (dao.update(id, n)) {
-      // success
-    } else {
-      // failure
-    }
+  public boolean updateHoliday(int id, HolidayModel n) {
+    return dao.update(id, n);
   }
 
   public List<HolidayModel> getAllHolidys() {
@@ -129,5 +140,10 @@ public class HolidayModel {
 
   public HolidayModel findHolidayById(int id) {
     return this.dao.findById(id);
+  }
+
+  @Override
+  public String toString() {
+    return "Holiday for Employee " + EmployeeName + " from " + startDate + " to " + endDate;
   }
 }

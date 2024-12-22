@@ -1,8 +1,7 @@
 package DAO;
 
-import Models.HolidayModel;
+import Model.HolidayModel;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,28 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HolidayDAOImpl implements GenericDAOI<HolidayModel> {
-  private static Connection con = null;
-  private static Statement st = null;
+  private Connection con = null;
 
   public HolidayDAOImpl() {
-    if (con != null && st != null) return;
-    try {
-      Class.forName("org.postgresql.Driver");
-      con = DriverManager.getConnection(url, dbuser, dbpw);
-      System.out.println("Connection established!!");
-      st = con.createStatement();
-    } catch (ClassNotFoundException | SQLException e) {
-      System.err.println(e);
-    }
+    con = new DBConnection().getConnection();
   }
 
   @Override
   public List<HolidayModel> getAll() {
     List<HolidayModel> l = new ArrayList<HolidayModel>();
+    Statement st;
     ResultSet rs = null;
     String query = "SELECT * FROM holiday INNER JOIN employee ON holiday.eid = employee.id";
 
     try {
+      st = con.createStatement();
       rs = st.executeQuery(query);
       while (rs.next()) {
         l.add(new HolidayModel(rs));
@@ -114,5 +106,31 @@ public class HolidayDAOImpl implements GenericDAOI<HolidayModel> {
     }
 
     return false;
+  }
+
+  public int updateSolde(int id, int decriment) {
+    PreparedStatement pst;
+    ResultSet rs;
+    int newSolde = -1;
+
+    try {
+      pst = con.prepareStatement("SELECT solde FROM employee WHERE id=?");
+      pst.setInt(1, id);
+      rs = pst.executeQuery();
+      rs.next();
+      newSolde = rs.getInt("solde") - decriment;
+    } catch (SQLException e) {
+      System.err.println(e);
+    }
+
+    try {
+      pst = con.prepareStatement("UPDATE employee SET solde=? WHERE id=?");
+      pst.setInt(1, newSolde);
+      pst.setInt(2, id);
+      pst.executeUpdate();
+    } catch (SQLException e) {
+      System.err.println(e);
+    }
+    return newSolde;
   }
 }
