@@ -24,7 +24,6 @@ hs_err_pid*
 replay_pid*
 
 # Latex files
-*.pdf
 *.out
 *.toc
 *.log
