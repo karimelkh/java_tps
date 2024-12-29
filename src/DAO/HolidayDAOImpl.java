@@ -1,6 +1,12 @@
 package DAO;
 
+import Model.EmployeeModel;
 import Model.HolidayModel;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,11 +15,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HolidayDAOImpl implements GenericDAOI<HolidayModel> {
+public class HolidayDAOImpl implements GenericDAOI<HolidayModel>, DataImportExport<HolidayModel> {
   private Connection con = null;
+  private EmployeeDAOImpl edao;
 
   public HolidayDAOImpl() {
     con = new DBConnection().getConnection();
+    edao = new EmployeeDAOImpl();
   }
 
   @Override
@@ -132,5 +140,64 @@ public class HolidayDAOImpl implements GenericDAOI<HolidayModel> {
       System.err.println(e);
     }
     return newSolde;
+  }
+
+  @Override
+  public void exportData(String filename, List<HolidayModel> data) throws IOException {
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+      writer.write("First Name,Last Name,Email,Phone,Role,Poste,Salary");
+      writer.newLine();
+      for (HolidayModel elm : data) {
+        EmployeeModel em = edao.findById(elm.getEid());
+        String line =
+            String.format(
+                "%s,%s,%s,%s,%s,%s,%.2f",
+                em.getFname(),
+                em.getLname(),
+                em.getEmail(),
+                em.getPhone(),
+                em.getRole(),
+                em.getPost(),
+                em.getSalary());
+        writer.write(line);
+        writer.newLine();
+      }
+      writer.close();
+    } catch (Exception e) {
+      System.err.println(e);
+    }
+  }
+
+  // Not test/Not used
+  @Override
+  public void importData(String filename) throws IOException {
+    PreparedStatement pst;
+    String query =
+        "INSERT INTO employee(fname, lname, email, phone, role, post, salary) VALUES (?, ?, ?, ?,"
+            + " ?, ?, ?)";
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(filename));
+      pst = con.prepareStatement(query);
+      String line = reader.readLine();
+      while ((line = reader.readLine()) != null) {
+        String[] data = line.split(",");
+        if (data.length == 7) {
+          pst.setString(1, data[0].trim());
+          pst.setString(2, data[1].trim());
+          pst.setString(3, data[2].trim());
+          pst.setString(4, data[3].trim());
+          pst.setString(5, data[4].trim());
+          pst.setString(6, data[5].trim());
+          pst.setDouble(7, Double.parseDouble(data[6].trim()));
+          pst.addBatch();
+        }
+      }
+      pst.executeBatch();
+      reader.close();
+      System.out.println("Employees imported successfully!");
+    } catch (IOException | SQLException e) {
+      System.err.println(e);
+    }
   }
 }

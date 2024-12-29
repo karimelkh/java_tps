@@ -4,8 +4,11 @@ import Model.EmployeeModel;
 import View.EmployeeView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import javax.swing.JFileChooser;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class EmployeeController {
 
@@ -23,6 +26,8 @@ public class EmployeeController {
     initShowEvent();
     initFillEvent();
     initTableEvents();
+    initImportBtn();
+    initExportBtn();
   }
 
   private void initAddEvent() {
@@ -47,7 +52,7 @@ public class EmployeeController {
               populateTable();
               view.showSuccess("EmployeeModel " + model + " added!");
             } else {
-              view.showFailure("Can't add employee " + model);
+              view.showFailure("Can't add employee");
             }
           }
         });
@@ -167,5 +172,59 @@ public class EmployeeController {
     view.salaryField.setText("");
     view.postComboBox.setSelectedIndex(0);
     view.roleComboBox.setSelectedIndex(0);
+  }
+
+  private void initImportBtn() {
+    view.importBtn.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            handleImport();
+            populateTable();
+          }
+        });
+  }
+
+  private void initExportBtn() {
+    view.exportBtn.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            handleExport();
+          }
+        });
+  }
+
+  private void handleImport() {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileFilter(new FileNameExtensionFilter("csv file", "csv"));
+    if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
+      try {
+        String filepath = fileChooser.getSelectedFile().getAbsolutePath();
+        model.importData(filepath);
+        view.showSuccess("Importing succeeds!");
+      } catch (IOException e) {
+        System.out.println(e);
+        view.showFailure("Error while importing data: " + e.getMessage());
+      }
+    }
+  }
+
+  private void handleExport() {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileFilter(new FileNameExtensionFilter("csv file", "csv"));
+    if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
+      try {
+        String filepath = fileChooser.getSelectedFile().getAbsolutePath();
+        if (!filepath.toLowerCase().endsWith(".csv")) {
+          filepath += ".csv";
+        }
+        model.exportData(filepath, model.getAllEmployees());
+        view.showSuccess("Exporting succeeds!");
+      } catch (IOException e) {
+        System.out.println(e);
+        view.showFailure("Error while exporting data: " + e.getMessage());
+      }
+    }
   }
 }

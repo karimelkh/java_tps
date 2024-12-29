@@ -1,6 +1,8 @@
 package Model;
 
 import DAO.HolidayDAOImpl;
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -145,5 +147,42 @@ public class HolidayModel {
   @Override
   public String toString() {
     return "Holiday for Employee " + EmployeeName + " from " + startDate + " to " + endDate;
+  }
+
+  public void exportData(String filepath, List<HolidayModel> data) throws IOException {
+    try {
+      checkIfFileExists(new File(filepath));
+      checksIsFile(new File(filepath));
+      checksIsReadable(new File(filepath));
+    } catch (IllegalArgumentException e) {
+      System.out.println(e);
+    }
+
+    try {
+      dao.exportData(filepath, data);
+    } catch (IOException e) {
+      throw new IOException();
+    }
+  }
+
+  private boolean checkIfFileExists(File file) throws IllegalArgumentException {
+    if (!file.exists()) {
+      throw new IllegalArgumentException(file.getName() + ": No such file.");
+    }
+    return true;
+  }
+
+  private boolean checksIsFile(File file) throws IllegalArgumentException {
+    if (!file.isFile()) {
+      throw new IllegalArgumentException(file.getName() + ": is not a file.");
+    }
+    return true;
+  }
+
+  private boolean checksIsReadable(File file) throws IllegalArgumentException {
+    if (!file.canRead()) {
+      throw new IllegalArgumentException(file.getName() + ": can not read file.");
+    }
+    return true;
   }
 }

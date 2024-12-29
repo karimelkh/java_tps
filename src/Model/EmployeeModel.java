@@ -1,9 +1,12 @@
 package Model;
 
 import DAO.EmployeeDAOImpl;
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeModel {
   private EmployeeDAOImpl dao = null;
@@ -154,21 +157,77 @@ public class EmployeeModel {
   }
 
   public boolean addEmployee() {
-    // add some tests
-    return dao.add(this);
+    try {
+      dao.add(this);
+      return true;
+    } catch (Exception e) {
+      System.out.println(e);
+      return false;
+    }
   }
 
   public boolean deleteEmployee(int id) {
-    // add some tests
     return dao.delete(id);
   }
 
   public boolean updateEmployee(int id) {
-    // add some tests
     return dao.update(id, this);
   }
 
   public ArrayList<EmployeeModel> getAllEmployees() {
     return dao.getAll();
+  }
+
+  public void importData(String filepath) throws IOException {
+    try {
+      checkIfFileExists(new File(filepath));
+      checksIsFile(new File(filepath));
+      checksIsReadable(new File(filepath));
+    } catch (IllegalArgumentException e) {
+      System.out.println(e);
+    }
+
+    try {
+      dao.importData(filepath);
+    } catch (IOException e) {
+      throw new IOException();
+    }
+  }
+
+  public void exportData(String filepath, List<EmployeeModel> data) throws IOException {
+    try {
+      checkIfFileExists(new File(filepath));
+      checksIsFile(new File(filepath));
+      checksIsReadable(new File(filepath));
+    } catch (IllegalArgumentException e) {
+      System.out.println(e);
+    }
+
+    try {
+      dao.exportData(filepath, data);
+    } catch (IOException e) {
+      throw new IOException();
+    }
+  }
+
+  private boolean checkIfFileExists(File file) throws IllegalArgumentException {
+    if (!file.exists()) {
+      throw new IllegalArgumentException(file.getName() + ": No such file.");
+    }
+    return true;
+  }
+
+  private boolean checksIsFile(File file) throws IllegalArgumentException {
+    if (!file.isFile()) {
+      throw new IllegalArgumentException(file.getName() + ": is not a file.");
+    }
+    return true;
+  }
+
+  private boolean checksIsReadable(File file) throws IllegalArgumentException {
+    if (!file.canRead()) {
+      throw new IllegalArgumentException(file.getName() + ": can not read file.");
+    }
+    return true;
   }
 }

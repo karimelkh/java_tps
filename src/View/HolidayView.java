@@ -16,6 +16,7 @@ public class HolidayView extends JPanel {
   public JButton deleteBtn = new JButton("Delete");
   public JButton updateBtn = new JButton("Update");
   public JButton refreshBtn = new JButton("Refresh");
+  public JButton exportBtn = new JButton("Export");
 
   public JComboBox<String> employeeField = new JComboBox<>();
   public JComboBox<HolidayType> typeField = new JComboBox<>(HolidayType.values());
@@ -58,11 +59,11 @@ public class HolidayView extends JPanel {
     buttonsPanel.add(deleteBtn);
     buttonsPanel.add(updateBtn);
     buttonsPanel.add(refreshBtn);
+    buttonsPanel.add(exportBtn);
   }
 
   public int getEid() {
-    return Integer.parseInt(
-        employeeField.getSelectedItem().toString().split("-")[0].replaceAll("\\s", ""));
+    return Integer.parseInt(employeeField.getSelectedItem().toString().split("-")[0].trim());
   }
 
   public String getType() {
